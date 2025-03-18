@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UOL GPA Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">University of Lahore GPA Calculator</h1>
+        
+        <ul class="nav nav-tabs" id="calculatorTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="gpa-tab" data-bs-toggle="tab" href="#gpa" role="tab">GPA Calculator</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="cgpa-tab" data-bs-toggle="tab" href="#cgpa" role="tab">CGPA Calculator</a>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-4" id="calculatorTabContent">
+            <!-- GPA Calculator Tab -->
+            <div class="tab-pane fade show active" id="gpa" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="gpaForm">
+                            <div id="courseList">
+                                <div class="course-entry mb-3">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <input type="text" class="form-control" placeholder="Course Name" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="number" class="form-control credits" placeholder="Credits" min="0" step="0.5" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="form-select grade" required>
+                                                <option value="">Select Grade</option>
+                                                {% for grade, points in grade_points.items() %}
+                                                    {% if points is not none %}
+                                                        <option value="{{ grade }}">{{ grade }} ({{ points }})</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-danger remove-course">&times;</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-primary" id="addCourse">Add Course</button>
+                                <button type="submit" class="btn btn-success">Calculate GPA</button>
+                            </div>
+                        </form>
+
+                        <div class="result-section mt-4 text-center" style="display: none;">
+                            <h3>Your GPA: <span id="gpaResult">0.00</span></h3>
+                            <p>Total Credits: <span id="totalCredits">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CGPA Calculator Tab -->
+            <div class="tab-pane fade" id="cgpa" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="cgpaForm">
+                            <div id="semesterList">
+                                <div class="semester-entry mb-3">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <input type="text" class="form-control" placeholder="Semester Name" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="number" class="form-control credits" placeholder="Credits" min="0" step="0.5" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="number" class="form-control gpa" placeholder="GPA" min="0" max="4" step="0.01" required>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-danger remove-semester">&times;</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-primary" id="addSemester">Add Semester</button>
+                                <button type="submit" class="btn btn-success">Calculate CGPA</button>
+                            </div>
+                        </form>
+
+                        <div class="cgpa-result-section mt-4 text-center" style="display: none;">
+                            <h3>Your CGPA: <span id="cgpaResult">0.00</span></h3>
+                            <p>Total Credits: <span id="cgpaTotalCredits">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 
