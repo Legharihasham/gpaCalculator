@@ -25,12 +25,15 @@ def calculate_gpa():
     try:
         data = request.get_json()
         courses = data.get('courses', [])
+        current_cgpa = float(data.get('currentCGPA', 0))
+        total_credits_completed = float(data.get('totalCreditsCompleted', 0))
         
         if not courses:
             return jsonify({'error': 'No courses provided'}), 400
 
-        total_points = 0
-        total_credits = 0
+        # Calculate semester GPA
+        semester_points = 0
+        semester_credits = 0
 
         for course in courses:
             grade = course.get('grade')
@@ -39,15 +42,27 @@ def calculate_gpa():
             if grade not in GRADE_POINTS or GRADE_POINTS[grade] is None:
                 continue
                 
-            total_points += GRADE_POINTS[grade] * credits
-            total_credits += credits
+            semester_points += GRADE_POINTS[grade] * credits
+            semester_credits += credits
 
-        if total_credits == 0:
+        if semester_credits == 0:
             return jsonify({'error': 'No valid courses to calculate GPA'}), 400
 
-        gpa = total_points / total_credits
+        semester_gpa = semester_points / semester_credits
+
+        # Calculate new CGPA if current CGPA is provided
+        new_cgpa = semester_gpa
+        total_credits = semester_credits
+
+        if current_cgpa > 0 and total_credits_completed > 0:
+            previous_points = current_cgpa * total_credits_completed
+            new_total_credits = total_credits_completed + semester_credits
+            new_cgpa = (previous_points + semester_points) / new_total_credits
+            total_credits = new_total_credits
+
         return jsonify({
-            'gpa': round(gpa, 2),
+            'gpa': round(semester_gpa, 2),
+            'newCGPA': round(new_cgpa, 2),
             'total_credits': total_credits
         })
 

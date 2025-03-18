@@ -34,8 +34,10 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         const courses = [];
+        let semesterCredits = 0;
+        
         document.querySelectorAll('.course-entry').forEach(entry => {
-            const credits = entry.querySelector('.credits').value;
+            const credits = parseFloat(entry.querySelector('.credits').value);
             const grade = entry.querySelector('.grade').value;
             
             if (credits && grade) {
@@ -43,15 +45,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     credits: credits,
                     grade: grade
                 });
+                semesterCredits += credits;
             }
         });
+
+        // Get current CGPA and total credits
+        const currentCGPA = parseFloat(document.getElementById('currentCGPA').value) || 0;
+        const totalCreditsCompleted = parseFloat(document.getElementById('totalCreditsCompleted').value) || 0;
 
         fetch('/calculate_gpa', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ courses: courses })
+            body: JSON.stringify({ 
+                courses: courses,
+                currentCGPA: currentCGPA,
+                totalCreditsCompleted: totalCreditsCompleted
+            })
         })
         .then(response => response.json())
         .then(data => {
@@ -60,6 +71,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             document.getElementById('gpaResult').textContent = data.gpa.toFixed(2);
+            document.getElementById('semesterCredits').textContent = semesterCredits;
+            document.getElementById('newCGPAResult').textContent = data.newCGPA.toFixed(2);
             document.getElementById('totalCredits').textContent = data.total_credits;
             document.querySelector('.result-section').style.display = 'block';
         })
@@ -75,8 +88,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const semesters = [];
         document.querySelectorAll('.semester-entry').forEach(entry => {
-            const credits = entry.querySelector('.credits').value;
-            const gpa = entry.querySelector('.gpa').value;
+            const credits = parseFloat(entry.querySelector('.credits').value);
+            const gpa = parseFloat(entry.querySelector('.gpa').value);
             
             if (credits && gpa) {
                 semesters.push({

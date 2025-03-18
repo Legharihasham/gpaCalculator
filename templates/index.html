@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center mb-4">University of Lahore GPA Calculator</h1>
+        <h1 class="text-center mb-4">University GPA Calculator</h1>
         
         <ul class="nav nav-tabs" id="calculatorTabs" role="tablist">
             <li class="nav-item">
@@ -26,27 +26,49 @@
                 <div class="card">
                     <div class="card-body">
                         <form id="gpaForm">
-                            <div id="courseList">
-                                <div class="course-entry mb-3">
-                                    <div class="row">
-                                        <div class="col-md-5">
-                                            <input type="text" class="form-control" placeholder="Course Name" required>
+                            <div class="current-cgpa-section mb-4">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Current CGPA (Optional)</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="currentCGPA" min="0" max="4" step="0.01" placeholder="Enter your current CGPA">
+                                            <span class="input-group-text">/ 4.00</span>
                                         </div>
-                                        <div class="col-md-3">
-                                            <input type="number" class="form-control credits" placeholder="Credits" min="0" step="0.5" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Total Credits Completed</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="totalCreditsCompleted" min="0" step="0.5" placeholder="Enter total credits completed">
+                                            <span class="input-group-text">credits</span>
                                         </div>
-                                        <div class="col-md-3">
-                                            <select class="form-select grade" required>
-                                                <option value="">Select Grade</option>
-                                                {% for grade, points in grade_points.items() %}
-                                                    {% if points is not none %}
-                                                        <option value="{{ grade }}">{{ grade }} ({{ points }})</option>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <button type="button" class="btn btn-danger remove-course">&times;</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="current-semester-section">
+                                <h4 class="mb-3">Current Semester Courses</h4>
+                                <div id="courseList">
+                                    <div class="course-entry mb-3">
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <input type="text" class="form-control" placeholder="Course Name" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="number" class="form-control credits" placeholder="Credits" min="0" step="0.5" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-select grade" required>
+                                                    <option value="">Select Grade</option>
+                                                    {% for grade, points in grade_points.items() %}
+                                                        {% if points is not none %}
+                                                            <option value="{{ grade }}">{{ grade }} ({{ points }})</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type="button" class="btn btn-danger remove-course">&times;</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -54,13 +76,21 @@
                             
                             <div class="text-center mt-3">
                                 <button type="button" class="btn btn-primary" id="addCourse">Add Course</button>
-                                <button type="submit" class="btn btn-success">Calculate GPA</button>
+                                <button type="submit" class="btn btn-success">Calculate GPA & CGPA</button>
                             </div>
                         </form>
 
                         <div class="result-section mt-4 text-center" style="display: none;">
-                            <h3>Your GPA: <span id="gpaResult">0.00</span></h3>
-                            <p>Total Credits: <span id="totalCredits">0</span></p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3>Semester GPA: <span id="gpaResult">0.00</span></h3>
+                                    <p>Semester Credits: <span id="semesterCredits">0</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h3>New CGPA: <span id="newCGPAResult">0.00</span></h3>
+                                    <p>Total Credits: <span id="totalCredits">0</span></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
