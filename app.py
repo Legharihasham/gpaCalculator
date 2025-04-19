@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify
-import json
 
 app = Flask(__name__)
 
@@ -27,21 +26,18 @@ def calculate_gpa():
         courses = data.get('courses', [])
         current_cgpa = float(data.get('currentCGPA', 0))
         total_credits_completed = float(data.get('totalCreditsCompleted', 0))
-        
+
         if not courses:
             return jsonify({'error': 'No courses provided'}), 400
 
-        # Calculate semester GPA
         semester_points = 0
         semester_credits = 0
 
         for course in courses:
             grade = course.get('grade')
             credits = float(course.get('credits', 0))
-            
             if grade not in GRADE_POINTS or GRADE_POINTS[grade] is None:
                 continue
-                
             semester_points += GRADE_POINTS[grade] * credits
             semester_credits += credits
 
@@ -49,8 +45,6 @@ def calculate_gpa():
             return jsonify({'error': 'No valid courses to calculate GPA'}), 400
 
         semester_gpa = semester_points / semester_credits
-
-        # Calculate new CGPA if current CGPA is provided
         new_cgpa = semester_gpa
         total_credits = semester_credits
 
@@ -60,10 +54,21 @@ def calculate_gpa():
             new_cgpa = (previous_points + semester_points) / new_total_credits
             total_credits = new_total_credits
 
+        # Add motivational message based on GPA
+        if semester_gpa > 3.5:
+            message = "Wah guru chaa gaye"
+        elif 3 <= semester_gpa <= 3.5:
+            message = "Mehnat kro na yaar"
+        elif semester_gpa < 2.9:
+            message = "Chlo bhai chutti kro"
+        else:
+            message = ""
+
         return jsonify({
             'gpa': round(semester_gpa, 2),
             'newCGPA': round(new_cgpa, 2),
-            'total_credits': total_credits
+            'total_credits': total_credits,
+            'message': message
         })
 
     except Exception as e:
@@ -74,7 +79,7 @@ def calculate_cgpa():
     try:
         data = request.get_json()
         semesters = data.get('semesters', [])
-        
+
         if not semesters:
             return jsonify({'error': 'No semesters provided'}), 400
 
@@ -84,7 +89,6 @@ def calculate_cgpa():
         for semester in semesters:
             credits = float(semester.get('credits', 0))
             gpa = float(semester.get('gpa', 0))
-            
             total_points += gpa * credits
             total_credits += credits
 
@@ -101,4 +105,4 @@ def calculate_cgpa():
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True)
